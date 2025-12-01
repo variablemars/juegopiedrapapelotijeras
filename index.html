@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piedra Papel o Tijera</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+
+        body, html {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #57cda6;
+        }
+
+        .container {
+            width: 420px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        #result img {
+            width: 40%;
+        }
+
+        button {
+            background-color: #7dffd8ec;
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+        }
+
+        #group-btn img {
+            width: 50px;
+        }
+
+        #result-text {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        #final-result {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>piedra papel o tijera</h1>
+
+        <div id="result">
+            <img id="machine-img" src="Piedra.png">
+            <div id="start-text">Elije una opcion</div>
+            <img id="user-img" src="Piedra.png">
+        </div>
+
+        <div id="group-btn">
+            <button id="piedra"><img src="Piedra.png"></button>
+            <button id="papel"><img src="Papel.png"></button>
+            <button id="tijera"><img src="Tijera.png"></button>
+        </div>
+
+        <div id="final-result"></div>
+    </div>
+
+    <script>
+        const PIEDRA = "Piedra",
+            PAPEL = "Papel",
+            TIJERA = "Tijera",
+            EMPATE = 0,
+            GANASTE = 1,
+            PERDISTE = 2;
+
+        let enJuego = false;
+
+        const botones = {
+            Piedra: document.getElementById("piedra"),
+            Papel: document.getElementById("papel"),
+            Tijera: document.getElementById("tijera")
+        };
+
+        const resultText = document.getElementById("start-text");
+        const userImg = document.getElementById("user-img");
+        const machineImg = document.getElementById("machine-img");
+        const finalResult = document.getElementById("final-result");
+
+        Object.keys(botones).forEach(opcion =>
+            botones[opcion].addEventListener("click", () => jugar(opcion))
+        );
+
+        function jugar(opcionUsuario) {
+            if (enJuego) return;
+            enJuego = true;
+
+            userImg.src = `${opcionUsuario}.png`;
+            resultText.textContent = " La maquina esta eligiendo";
+
+            const intervalo = setInterval(() => {
+                machineImg.src = `${calcularOpcionMaquina()}.png`;
+            }, 200);
+
+            setTimeout(() => {
+                clearInterval(intervalo);
+
+                const opcionMaquina = calcularOpcionMaquina();
+                const resultado = calcularResultado(opcionUsuario, opcionMaquina);
+
+                machineImg.src = `${opcionMaquina}.png`;
+
+                resultText.textContent =
+                    resultado === EMPATE ? "Empate" :
+                        resultado === GANASTE ? "¡Ganaste!" :
+                            "Perdiste";
+
+                finalResult.textContent = "";
+
+                enJuego = false;
+
+            }, 2000);
+        }
+
+        function calcularOpcionMaquina() {
+            return [PIEDRA, PAPEL, TIJERA][Math.floor(Math.random() * 3)];
+        }
+
+        function calcularResultado(usuario, maquina) {
+            if (usuario === maquina) return EMPATE;
+            if (usuario === PIEDRA) return maquina === PAPEL ? PERDISTE : GANASTE;
+            if (usuario === PAPEL) return maquina === TIJERA ? PERDISTE : GANASTE;
+            return maquina === PIEDRA ? PERDISTE : GANASTE;
+        }
+    </script>
+</body>
+
+</html>
